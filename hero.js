@@ -176,6 +176,11 @@ var moves = {
   // This hero will try really hard not to die.
   coward : function(gameData, helpers) {
     return helpers.findNearestHealthWell(gameData);
+  },
+
+  // My test
+  dave : function(gameData, helpers) {
+    return helpers.findNearestHealthWell(gameData);
   }
  };
 
