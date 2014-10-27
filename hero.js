@@ -190,7 +190,7 @@ var moves = {
     whatsAround.s = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'South');
     whatsAround.e = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'East');
     whatsAround.w = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'West');
-    console.log(whatsAround);
+    
     var directions = {
       n: 'North',
       s: 'South',
