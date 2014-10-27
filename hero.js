@@ -179,13 +179,83 @@ var moves = {
   },
 
   // My test
-  dave : function(gameData, helpers) {
-    return helpers.findNearestHealthWell(gameData);
+  dslaugh : function(gameData, helpers) {
+    var myHero = gameData.activeHero;
+    // var test = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(boardTile) {
+
+    // });
+
+    var whatsAround = {};
+    whatsAround.n = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'North');
+    whatsAround.s = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'South');
+    whatsAround.e = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'East');
+    whatsAround.w = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'West');
+    console.log(whatsAround);
+    var directions = {
+      n: 'North',
+      s: 'South',
+      e: 'East',
+      w: 'West'
+    };
+    var healthDir = false;
+    var diamondDir = false;
+    var unoccupiedDirs = [];
+    var friendsDir = [];
+    var enemiesDir = [];
+
+    var dirs = Object.keys(whatsAround);
+
+    //HealthWell
+    dirs.forEach(function(dir) {
+        if (whatsAround[dir].type === 'HealthWell') {
+            healthDir = directions[dir];  
+        }
+    });
+
+    //DiamondMine
+    dirs.forEach(function(dir) {
+        if(whatsAround[dir].type === 'DiamondMine' && whatsAround[dir].owner === undefined) {
+            diamondDir = directions[dir];
+        }
+    });
+
+    //Friends
+    dirs.forEach(function(dir) {
+        if(whatsAround[dir].type === 'Hero' && whatsAround[dir].team === myHero.team) {
+            friendsDir.push(directions[dir]);
+        }
+    });
+
+    //Enemies
+    dirs.forEach(function(dir) {
+        if(whatsAround[dir].type === 'Hero' && whatsAround[dir].team !== myHero.team) {
+            enemiesDir.push(directions[dir]);
+        }
+    });
+    
+
+    //Unoccupied
+    dirs.forEach(function(dir) {
+        if(whatsAround[dir].type === 'Unoccupied') {
+            unoccupiedDirs.push(directions[dir]);
+        }
+    });
+
+    if (healthDir && myHero.health < 100) {
+      return healthDir;
+    } else if (diamondDir) {
+      return diamondDir;
+    }
+    if (myHero.health < 100) {
+      return helpers.findNearestHealthWell(gameData);
+    } else {
+      return helpers.findNearestEnemy(gameData);
+    }    
   }
  };
 
 //  Set our heros strategy
-var  move =  moves.carefulAssassin;
+var  move =  moves.dslaugh;
 
 // Export the move function here
 module.exports = move;

@@ -56,7 +56,7 @@ console.log('About to start the game!  Here is what the board looks like:');
 game.board.inspect();
 
 //Play a very short practice game
-var turnsToPlay = 15;
+var turnsToPlay = 25;
 
 for (var i=0; i<turnsToPlay; i++) {
   var hero = game.activeHero;
