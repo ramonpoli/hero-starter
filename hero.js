@@ -246,7 +246,7 @@ var moves = {
     } else if (diamondDir) {
       return diamondDir;
     }
-    if (myHero.health < 100) {
+    if (myHero.health < 80) {
       return helpers.findNearestHealthWell(gameData);
     } else {
       return helpers.findNearestEnemy(gameData);
