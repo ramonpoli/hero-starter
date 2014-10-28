@@ -181,10 +181,6 @@ var moves = {
   // My test
   dslaugh : function(gameData, helpers) {
     var myHero = gameData.activeHero;
-    // var test = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(boardTile) {
-
-    // });
-
     var whatsAround = {};
     whatsAround.n = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'North');
     whatsAround.s = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'South');
@@ -214,8 +210,14 @@ var moves = {
 
     //DiamondMine
     dirs.forEach(function(dir) {
-        if(whatsAround[dir].type === 'DiamondMine' && whatsAround[dir].owner === undefined) {
-            diamondDir = directions[dir];
+        if(whatsAround[dir].type === 'DiamondMine') {
+            if (whatsAround[dir].owner === undefined) {
+              diamondDir = directions[dir];
+            } else {
+              if (whatsAround[dir].owner.team !== myHero.team) {
+                  diamondDir = directions[dir];
+              }
+            }
         }
     });
 
@@ -240,10 +242,11 @@ var moves = {
             unoccupiedDirs.push(directions[dir]);
         }
     });
-
+    
     if (healthDir && myHero.health < 100) {
       return healthDir;
-    } else if (diamondDir) {
+    }
+    if (diamondDir && myHero.health > 60) {
       return diamondDir;
     }
     if (myHero.health < 80) {
