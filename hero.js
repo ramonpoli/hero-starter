@@ -181,11 +181,7 @@ var moves = {
   // My test
   dslaugh : function(gameData, helpers) {
     var myHero = gameData.activeHero;
-    var whatsAround = {};
-    whatsAround.n = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'North');
-    whatsAround.s = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'South');
-    whatsAround.e = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'East');
-    whatsAround.w = helpers.getTileNearby(gameData.board, myHero.distanceFromTop, myHero.distanceFromLeft, 'West');
+    var whatsAround = helpers.getWhatsAroundMe(gameData);
     
     var directions = {
       n: 'North',

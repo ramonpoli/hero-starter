@@ -246,4 +246,13 @@ helpers.findNearestTeamMember = function(gameData) {
   return pathInfoObject.direction;
 };
 
+helpers.getWhatsAroundMe = function(gameData) {
+    var whatsAround = {};
+    whatsAround.n = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'North');
+    whatsAround.s = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'South');
+    whatsAround.e = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'East');
+    whatsAround.w = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'West');
+    return whatsAround;
+};
+
 module.exports = helpers;
