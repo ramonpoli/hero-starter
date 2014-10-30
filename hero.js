@@ -184,10 +184,10 @@ var moves = {
     var whatsAround = helpers.getWhatsAroundMe(gameData);
     
     var directions = {
-      n: 'North',
-      s: 'South',
-      e: 'East',
-      w: 'West'
+      North: 'North',
+      South: 'South',
+      East: 'East',
+      West: 'West'
     };
     var healthDir = false;
     var diamondDir = false;
@@ -230,7 +230,6 @@ var moves = {
             enemiesDir.push(directions[dir]);
         }
     });
-    
 
     //Unoccupied
     dirs.forEach(function(dir) {
@@ -240,16 +239,31 @@ var moves = {
     });
     
     if (healthDir && myHero.health < 100) {
+      // console.log('health one');
       return healthDir;
     }
+    if (myHero.health < 80) {
+      // console.log('health two')
+      return helpers.findNearestHealthWell(gameData);
+    }
+    if (enemiesDir.length > 0) {
+      // console.log('enemy', whatsAround[enemiesDir[0]]);
+      var enemyHealth = 100;
+      var lowEnemyDir = false;
+      enemiesDir.forEach(function(enemyDir) {
+        var enemy = whatsAround[enemyDir];
+        if (enemy.health <= enemyHealth) {
+          lowEnemyDir = enemyDir;
+        }
+      });
+      return lowEnemyDir;
+    }
     if (diamondDir && myHero.health > 60) {
+      // console.log('diamond');
       return diamondDir;
     }
-    if (myHero.health < 80) {
-      return helpers.findNearestHealthWell(gameData);
-    } else {
-      return helpers.findNearestEnemy(gameData);
-    }    
+    // console.log('default');
+    return helpers.findNearestEnemy(gameData);
   }
  };
 

@@ -248,10 +248,10 @@ helpers.findNearestTeamMember = function(gameData) {
 
 helpers.getWhatsAroundMe = function(gameData) {
     var whatsAround = {};
-    whatsAround.n = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'North');
-    whatsAround.s = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'South');
-    whatsAround.e = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'East');
-    whatsAround.w = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'West');
+    whatsAround.North = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'North');
+    whatsAround.South = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'South');
+    whatsAround.East = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'East');
+    whatsAround.West = helpers.getTileNearby(gameData.board, gameData.activeHero.distanceFromTop, gameData.activeHero.distanceFromLeft, 'West');
     return whatsAround;
 };
 
