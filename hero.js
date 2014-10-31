@@ -227,7 +227,7 @@ var moves = {
     });
 
     if (healthDir && myHero.health < 100) {
-      console.log('health one');
+      // console.log('health one');
       return healthDir;
     }
     if (myHero.health < 80) {
@@ -236,18 +236,18 @@ var moves = {
           enemiesDir.forEach(function(enemyDir) {
             var enemy = whatsAround[enemyDir];
             if (enemy.health <= 30) {
-              console.log('health three');
+              // console.log('health three');
               return enemyDir;
             }
           });
         }
       }
 
-      console.log('health two')
+      // console.log('health two')
       return helpers.findNearestHealthWell(gameData);
     }
     if (enemiesDir.length > 0) {
-      console.log('enemy');
+      // console.log('enemy');
       var enemyHealth = 100;
       var lowEnemyDir = false;
       enemiesDir.forEach(function(enemyDir) {
@@ -259,10 +259,10 @@ var moves = {
       return lowEnemyDir;
     }
     if (diamondDir && myHero.health > 80) {
-      console.log('diamond');
+      // console.log('diamond');
       return diamondDir;
     }
-    console.log('default');
+    // console.log('default');
     return helpers.findNearestEnemy(gameData);
   }
  };
