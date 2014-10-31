@@ -197,15 +197,12 @@ var moves = {
 
     var dirs = Object.keys(whatsAround);
 
-    //HealthWell
     dirs.forEach(function(dir) {
+        //HealthWell
         if (whatsAround[dir].type === 'HealthWell') {
             healthDir = directions[dir];  
         }
-    });
-
-    //DiamondMine
-    dirs.forEach(function(dir) {
+        //Non-team DiamondMine
         if(whatsAround[dir].type === 'DiamondMine') {
             if (whatsAround[dir].owner === undefined) {
               diamondDir = directions[dir];
@@ -215,39 +212,42 @@ var moves = {
               }
             }
         }
-    });
-
-    //Friends
-    dirs.forEach(function(dir) {
+        //Friends
         if(whatsAround[dir].type === 'Hero' && whatsAround[dir].team === myHero.team) {
             friendsDir.push(directions[dir]);
         }
-    });
-
-    //Enemies
-    dirs.forEach(function(dir) {
+        //Enemies
         if(whatsAround[dir].type === 'Hero' && whatsAround[dir].team !== myHero.team) {
             enemiesDir.push(directions[dir]);
         }
-    });
-
-    //Unoccupied
-    dirs.forEach(function(dir) {
+        //Unoccupied
         if(whatsAround[dir].type === 'Unoccupied') {
             unoccupiedDirs.push(directions[dir]);
         }
     });
-    
+
     if (healthDir && myHero.health < 100) {
-      // console.log('health one');
+      console.log('health one');
       return healthDir;
     }
     if (myHero.health < 80) {
-      // console.log('health two')
+      if (myHero.health >= 60) {
+        if (enemiesDir.length > 0) {
+          enemiesDir.forEach(function(enemyDir) {
+            var enemy = whatsAround[enemyDir];
+            if (enemy.health <= 30) {
+              console.log('health three');
+              return enemyDir;
+            }
+          });
+        }
+      }
+
+      console.log('health two')
       return helpers.findNearestHealthWell(gameData);
     }
     if (enemiesDir.length > 0) {
-      // console.log('enemy', whatsAround[enemiesDir[0]]);
+      console.log('enemy');
       var enemyHealth = 100;
       var lowEnemyDir = false;
       enemiesDir.forEach(function(enemyDir) {
@@ -259,10 +259,10 @@ var moves = {
       return lowEnemyDir;
     }
     if (diamondDir && myHero.health > 80) {
-      // console.log('diamond');
+      console.log('diamond');
       return diamondDir;
     }
-    // console.log('default');
+    console.log('default');
     return helpers.findNearestEnemy(gameData);
   }
  };
