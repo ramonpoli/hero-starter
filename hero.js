@@ -258,7 +258,7 @@ var moves = {
       });
       return lowEnemyDir;
     }
-    if (diamondDir && myHero.health > 60) {
+    if (diamondDir && myHero.health > 80) {
       // console.log('diamond');
       return diamondDir;
     }
