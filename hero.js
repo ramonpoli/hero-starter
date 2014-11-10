@@ -180,6 +180,7 @@ var moves = {
 
   // My test
   dslaugh : function(gameData, helpers) {
+    console.log(gameData.impassables);
     var myHero = gameData.activeHero;
     var whatsAround = helpers.getWhatsAroundMe(gameData);
     
@@ -231,7 +232,7 @@ var moves = {
       return healthDir;
     }
     if (myHero.health < 80) {
-      if (myHero.health >= 60) {
+      if (myHero.health >= 55) {
         if (enemiesDir.length > 0) {
           enemiesDir.forEach(function(enemyDir) {
             var enemy = whatsAround[enemyDir];
@@ -242,7 +243,6 @@ var moves = {
           });
         }
       }
-
       // console.log('health two')
       return helpers.findNearestHealthWell(gameData);
     }
