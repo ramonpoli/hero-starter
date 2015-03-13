@@ -276,7 +276,6 @@ var moves = {
     dslaugh2: function(gameData, helpers) {
         var myTop = gameData.activeHero.distanceFromTop;
         var myLeft = gameData.activeHero.distanceFromLeft;
-        var whatsAroundMe = helpers.getWhatsAroundTile(gameData, myTop, myLeft);
         var directions = {
             NorthWest: 'NorthWest',
             North: 'North',
@@ -287,38 +286,50 @@ var moves = {
             SouthWest: 'SouthWest',
             West: 'West'
         };
-        var directionsICanMove = ['North','South','East','West'];
         var myHero = gameData.activeHero;
-        var healthWells = [];
-        var diamonds = [];
-        var enemies = [];
-        var friends = [];
-        var unoccupied = [];
+        var thingsAroundMe = {
+          healthWells: [],
+          diamonds:  [],
+          enemies:  [],
+          friends:  [],
+          unoccupied:  []
+        };
         var moveDir;
 
-        var dirs = Object.keys(directions);
-        dirs.forEach(function(dir) {
-            var tile = whatsAroundMe[dir];
-            if (tile) {
-                if (tile.type === 'Unoccupied') {
-                    unoccupied.push(directions[dir]);
-                } else if (tile.type === 'HealthWell') {
-                    healthWells.push(directions[dir]);
-                } else if (tile.type === 'DiamondMine') {
-                    diamonds.push(directions[dir]);
-                } else if (tile.type === 'Hero' && tile.team === myHero.team) {
-                    friends.push(directions[dir]);
-                } else if (tile.type === 'Hero' && tile.team !== myHero.team) {
-                    enemies.push(directions[dir]);
-                }
-            }
-            // console.log(tile);
-        });
 
-        var inDirectionICanMove = function(arr) {
-            return arr.filter(function(dir) {
-                return directionsICanMove.indexOf(dir) !== -1;
+        var processWhatsAroundTile = function(whatsAround) {
+            var things = {
+              healthWells: [],
+              diamonds:  [],
+              enemies:  [],
+              friends:  [],
+              unoccupied:  []              
+            };
+            var dirs = Object.keys(directions);
+            dirs.forEach(function(dir) {
+                var tile = whatsAroundMe[dir];
+                if (tile) {
+                    if (tile.type === 'Unoccupied') {
+                        things.unoccupied.push(directions[dir]);
+                    } else if (tile.type === 'HealthWell') {
+                        things.healthWells.push(directions[dir]);
+                    } else if (tile.type === 'DiamondMine') {
+                        things.diamonds.push(directions[dir]);
+                    } else if (tile.type === 'Hero' && tile.team === myHero.team) {
+                        things.friends.push(directions[dir]);
+                    } else if (tile.type === 'Hero' && tile.team !== myHero.team) {
+                        things.enemies.push(directions[dir]);
+                    }
+                }
             });
+            return things;
+        };
+
+        var isDirectionICanMove = function(dir) {
+            return ['North','South','East','West'].indexOf(dir) !== -1;
+        };
+        var inDirectionICanMove = function(arr) {
+            return arr.filter(isDirectionICanMove);
         };
         var getLowestEnemyHealthDir = function(enemyDirs) {
             var lowestHealth = 100;
@@ -332,15 +343,41 @@ var moves = {
             return lowestHealthDir;
         };
 
-        if (myHero.health < 100 && inDirectionICanMove(healthWells).length > 0) {
+
+        var whatsAroundMe = helpers.getWhatsAroundTile(gameData, myTop, myLeft);
+        thingsAroundMe = processWhatsAroundTile(whatsAroundMe);
+        // console.log(thingsAroundMe);
+
+        // See what is one move away
+        var nearDeadEnemies = [];
+        thingsAroundMe.unoccupied.forEach(function(dir) {
+            var tile = whatsAroundMe[dir];
+            var whatsAroundUnoccupied = helpers.getWhatsAroundTile(gameData, tile.distanceFromTop, tile.distanceFromLeft);
+
+            var unoccupiedDirs = Object.keys(whatsAroundUnoccupied);
+            unoccupiedDirs.forEach(function(udir) {
+                var utile = whatsAroundUnoccupied[udir];
+                if (utile.type === 'Hero' && utile.team !== myHero.team && utile.health <= 20) {
+                    if (isDirectionICanMove(dir)) {
+                        nearDeadEnemies.push(dir);
+                    }
+                }
+            });
+        });
+        // console.log('nearDeadEnemies');
+        // console.log(nearDeadEnemies);
+        if (nearDeadEnemies.length > 0) {
+            // console.log('kill move');
+            moveDir = nearDeadEnemies[0];
+        } else if (myHero.health < 100 && inDirectionICanMove(thingsAroundMe.healthWells).length > 0) {
             // console.log('getting health because it is there');
-            moveDir = healthWells[0];
+            moveDir = helpers.findNearestHealthWell(gameData);
         } else if (myHero.health < 80) {
             // console.log('need health');
             moveDir = helpers.findNearestHealthWell(gameData);
-        } else if (enemies.length > 0) {
+        } else if (thingsAroundMe.enemies.length > 0) {
             // console.log('going after enemy');
-            var attackableEnemies = inDirectionICanMove(enemies);
+            var attackableEnemies = inDirectionICanMove(thingsAroundMe.enemies);
             if (attackableEnemies.length > 0) {
                 moveDir = getLowestEnemyHealthDir(attackableEnemies);
             } else {
