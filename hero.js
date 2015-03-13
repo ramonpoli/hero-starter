@@ -180,9 +180,10 @@ var moves = {
 
   // My test
   dslaugh : function(gameData, helpers) {
-    console.log(gameData.impassables);
+    var test = helpers.getLastMove();
     var myHero = gameData.activeHero;
     var whatsAround = helpers.getWhatsAroundMe(gameData);
+    var moveDir;
     
     var directions = {
       North: 'North',
@@ -229,7 +230,7 @@ var moves = {
 
     if (healthDir && myHero.health < 100) {
       // console.log('health one');
-      return healthDir;
+      moveDir = healthDir;
     }
     if (myHero.health < 80) {
       if (myHero.health >= 55) {
@@ -238,13 +239,13 @@ var moves = {
             var enemy = whatsAround[enemyDir];
             if (enemy.health <= 30) {
               // console.log('health three');
-              return enemyDir;
+              moveDir = enemyDir;
             }
           });
         }
       }
       // console.log('health two')
-      return helpers.findNearestHealthWell(gameData);
+      moveDir = helpers.findNearestHealthWell(gameData);
     }
     if (enemiesDir.length > 0) {
       // console.log('enemy');
@@ -256,19 +257,120 @@ var moves = {
           lowEnemyDir = enemyDir;
         }
       });
-      return lowEnemyDir;
+      moveDir = lowEnemyDir;
     }
     if (diamondDir && myHero.health > 80) {
       // console.log('diamond');
-      return diamondDir;
+      moveDir = diamondDir;
     }
     // console.log('default');
-    return helpers.findNearestEnemy(gameData);
-  }
+    moveDir = helpers.findNearestEnemy(gameData);
+
+    if (!moveDir) {
+      moveDir = helpers.findNearestHealthWell(gameData);
+    }
+
+    return moveDir;
+  },
+
+    dslaugh2: function(gameData, helpers) {
+        var myTop = gameData.activeHero.distanceFromTop;
+        var myLeft = gameData.activeHero.distanceFromLeft;
+        var whatsAroundMe = helpers.getWhatsAroundTile(gameData, myTop, myLeft);
+        var directions = {
+            NorthWest: 'NorthWest',
+            North: 'North',
+            NorthEast: 'NorthEast',
+            East: 'East',
+            SouthEast: 'SouthEast',
+            South: 'South',
+            SouthWest: 'SouthWest',
+            West: 'West'
+        };
+        var directionsICanMove = ['North','South','East','West'];
+        var myHero = gameData.activeHero;
+        var healthWells = [];
+        var diamonds = [];
+        var enemies = [];
+        var friends = [];
+        var unoccupied = [];
+        var moveDir;
+
+        var dirs = Object.keys(directions);
+        dirs.forEach(function(dir) {
+            var tile = whatsAroundMe[dir];
+            if (tile) {
+                if (tile.type === 'Unoccupied') {
+                    unoccupied.push(directions[dir]);
+                } else if (tile.type === 'HealthWell') {
+                    healthWells.push(directions[dir]);
+                } else if (tile.type === 'DiamondMine') {
+                    diamonds.push(directions[dir]);
+                } else if (tile.type === 'Hero' && tile.team === myHero.team) {
+                    friends.push(directions[dir]);
+                } else if (tile.type === 'Hero' && tile.team !== myHero.team) {
+                    enemies.push(directions[dir]);
+                }
+            }
+            // console.log(tile);
+        });
+
+        var inDirectionICanMove = function(arr) {
+            return arr.filter(function(dir) {
+                return directionsICanMove.indexOf(dir) !== -1;
+            });
+        };
+        var getLowestEnemyHealthDir = function(enemyDirs) {
+            var lowestHealth = 100;
+            var lowestHealthDir;
+            enemyDirs.forEach(function(dir) {
+                if (whatsAroundMe[dir].health <= lowestHealth) {
+                    lowestHealth = whatsAroundMe[dir].health;
+                    lowestHealthDir = dir;
+                }
+            });
+            return lowestHealthDir;
+        };
+
+        if (myHero.health < 100 && inDirectionICanMove(healthWells).length > 0) {
+            // console.log('getting health because it is there');
+            moveDir = healthWells[0];
+        } else if (myHero.health < 80) {
+            // console.log('need health');
+            moveDir = helpers.findNearestHealthWell(gameData);
+        } else if (enemies.length > 0) {
+            // console.log('going after enemy');
+            var attackableEnemies = inDirectionICanMove(enemies);
+            if (attackableEnemies.length > 0) {
+                moveDir = getLowestEnemyHealthDir(attackableEnemies);
+            } else {
+                moveDir = helpers.findNearestEnemy(gameData);
+            }
+        } else {
+            // console.log('default');
+            moveDir = helpers.findNearestEnemy(gameData);
+            if (!moveDir) {
+                moveDir = helpers.findNearestUnownedDiamondMine(gameData);
+            }
+            if (!moveDir) {
+                moveDir = helpers.findNearestHealthWell(gameData);
+            }
+        }
+        // console.log(unoccupied);
+        // console.log(healthWells);
+        // console.log(diamonds);
+        // console.log(friends);
+        // console.log(enemies);
+        // console.log('moveDir: '+ moveDir);
+        return moveDir;
+    }
+
  };
 
+
+
 //  Set our heros strategy
-var  move =  moves.dslaugh;
+var  move =  moves.dslaugh2;
 
 // Export the move function here
 module.exports = move;
