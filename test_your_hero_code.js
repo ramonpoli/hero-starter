@@ -105,5 +105,5 @@ var x = setInterval(function() {
   if (i >= 50) {
     clearInterval(x);
   }
-}, 1000);
+}, 500);
 
