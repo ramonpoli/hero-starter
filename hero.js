@@ -366,10 +366,8 @@ var moves = {
         });
         // console.log('nearDeadEnemies');
         // console.log(nearDeadEnemies);
-        if (nearDeadEnemies.length > 0) {
-            // console.log('kill move');
-            moveDir = nearDeadEnemies[0];
-        } else if (myHero.health < 100 && inDirectionICanMove(thingsAroundMe.healthWells).length > 0) {
+
+        if (myHero.health < 100 && inDirectionICanMove(thingsAroundMe.healthWells).length > 0) {
             // console.log('getting health because it is there');
             moveDir = helpers.findNearestHealthWell(gameData);
         } else if (myHero.health < 80) {
@@ -393,12 +391,6 @@ var moves = {
                 moveDir = helpers.findNearestHealthWell(gameData);
             }
         }
-        // console.log(unoccupied);
-        // console.log(healthWells);
-        // console.log(diamonds);
-        // console.log(friends);
-        // console.log(enemies);
-        // console.log('moveDir: '+ moveDir);
         return moveDir;
     }
 

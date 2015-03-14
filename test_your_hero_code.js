@@ -47,6 +47,7 @@ game.addHero(0, 0, 'MyHero', 0);
 
 //Add an enemy hero in the bottom left corner of the map (team 1)
 game.addHero(4, 4, 'Enemy', 1);
+game.addHero(4, 0, 'Enemy', 1);
 
 console.log('About to start the game!  Here is what the board looks like:');
 
@@ -58,7 +59,26 @@ game.board.inspect();
 //Play a very short practice game
 var turnsToPlay = 50;
 
-for (var i=0; i<turnsToPlay; i++) {
+// for (var i=0; i<turnsToPlay; i++) {
+//   var hero = game.activeHero;
+//   var direction;
+//   if (hero.name === 'MyHero') {
+
+//     //Ask your hero brain which way it wants to move
+//     direction = heroMoveFunction(game, helpers);
+//   } else {
+//     direction = enemyMoveFunction(game, helpers);
+//   }
+//   console.log('-----');
+//   console.log('Turn ' + i + ':');
+//   console.log('-----');
+//   console.log(hero.name + ' tried to move ' + direction);
+//   console.log(hero.name + ' owns ' + hero.mineCount + ' diamond mines')
+//   console.log(hero.name + ' has ' + hero.health + ' health')
+//   game.handleHeroTurn(direction);
+//   game.board.inspect();
+// }
+function turn(i) {
   var hero = game.activeHero;
   var direction;
   if (hero.name === 'MyHero') {
@@ -75,5 +95,15 @@ for (var i=0; i<turnsToPlay; i++) {
   console.log(hero.name + ' owns ' + hero.mineCount + ' diamond mines')
   console.log(hero.name + ' has ' + hero.health + ' health')
   game.handleHeroTurn(direction);
-  game.board.inspect();
+  game.board.inspect();  
 }
+
+var i = 0;
+var x = setInterval(function() {
+  turn(i);
+  i++;
+  if (i >= 50) {
+    clearInterval(x);
+  }
+}, 1000);
+
