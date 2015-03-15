@@ -276,13 +276,13 @@ helpers.getWhatsAroundTile = function(gameData, distanceFromTop, distanceFromLef
     };
 
     var whatsAround = {
-        'NorthWest': helpers.getTileAt(gameData.board, tileDirs.tileNW[0], tileDirs.tileNW[1]),
+        // 'NorthWest': helpers.getTileAt(gameData.board, tileDirs.tileNW[0], tileDirs.tileNW[1]),
         'North': helpers.getTileAt(gameData.board, tileDirs.tileN[0], tileDirs.tileN[1]),
-        'NorthEast': helpers.getTileAt(gameData.board, tileDirs.tileNE[0], tileDirs.tileNE[1]),
+        // 'NorthEast': helpers.getTileAt(gameData.board, tileDirs.tileNE[0], tileDirs.tileNE[1]),
         'East': helpers.getTileAt(gameData.board, tileDirs.tileE[0], tileDirs.tileE[1]),
-        'SouthEast': helpers.getTileAt(gameData.board, tileDirs.tileSE[0], tileDirs.tileSE[1]),
+        // 'SouthEast': helpers.getTileAt(gameData.board, tileDirs.tileSE[0], tileDirs.tileSE[1]),
         'South': helpers.getTileAt(gameData.board, tileDirs.tileS[0], tileDirs.tileS[1]),
-        'SouthWest': helpers.getTileAt(gameData.board, tileDirs.tileSW[0], tileDirs.tileSW[1]),
+        // 'SouthWest': helpers.getTileAt(gameData.board, tileDirs.tileSW[0], tileDirs.tileSW[1]),
         'West': helpers.getTileAt(gameData.board, tileDirs.tileW[0], tileDirs.tileW[1]),
     };
     return whatsAround;

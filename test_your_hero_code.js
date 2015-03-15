@@ -47,7 +47,8 @@ game.addHero(0, 0, 'MyHero', 0);
 
 //Add an enemy hero in the bottom left corner of the map (team 1)
 game.addHero(4, 4, 'Enemy', 1);
-game.addHero(4, 0, 'Enemy', 1);
+// game.addHero(4, 0, 'Enemy', 1);
+game.addHero(1, 2, 'Enemy', 1);
 
 console.log('About to start the game!  Here is what the board looks like:');
 
@@ -57,7 +58,7 @@ console.log('About to start the game!  Here is what the board looks like:');
 game.board.inspect();
 
 //Play a very short practice game
-var turnsToPlay = 50;
+var turnsToPlay = 60;
 
 // for (var i=0; i<turnsToPlay; i++) {
 //   var hero = game.activeHero;
@@ -102,8 +103,8 @@ var i = 0;
 var x = setInterval(function() {
   turn(i);
   i++;
-  if (i >= 50) {
+  if (i >= turnsToPlay) {
     clearInterval(x);
   }
-}, 500);
+}, 250);
 
