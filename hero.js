@@ -184,7 +184,7 @@ var moves = {
     var myHero = gameData.activeHero;
     var whatsAround = helpers.getWhatsAroundMe(gameData);
     var moveDir;
-    
+
     var directions = {
       North: 'North',
       South: 'South',
@@ -367,7 +367,7 @@ var moves = {
             });
             return bestDir;
         };
-                    
+
 
 
 
@@ -441,14 +441,111 @@ var moves = {
         // console.log(moveDir);
         // console.log(moveDirWeight);
         return moveDir;
+    },
+
+    raypoly:  function(gameData, helpers) {
+        var myTop = gameData.activeHero.distanceFromTop;
+        var myLeft = gameData.activeHero.distanceFromLeft;
+        var myHero = gameData.activeHero;
+        var moveDir = '';
+        var nearDeadEnemyNextToMe = false;
+
+        var thingsAroundMe = processWhatsAroundTile(helpers.getWhatsAroundTile(gameData, myTop, myLeft), myHero);
+        console.log(thingsAroundMe)
+        for( var thingKey in thingsAroundMe ) {
+            var thing = thingsAroundMe[thingKey];
+            if( thing.length >= 1) {
+                if ( nearDeadEnemyNextToMe )
+                    return directions[nearDeadEnemyNextToMe];
+                else if ( thingKey == 'enemies' ) {
+                    if ( myHero.health >= 40 ) {
+                        return thing[0];
+                    }
+                    else if ( thingsAroundMe.healthWells[0] )
+                        return thingsAroundMe.healthWells[0]
+                    else if ( thingsAroundMe.unoccupied[0] )
+                        return thingsAroundMe.unoccupied[0]
+                    else
+                        return false;
+                }
+                else if ( thingsAroundMe.unoccupied[0] )
+                    return thingsAroundMe.unoccupied[0]
+            }
+        }
+        return 'South';
     }
 
  };
 
 
 
+var processWhatsAroundTile = function(whatsAround, myHero) {
+    var things = {
+        healthWells: [],
+        diamonds:  [],
+        enemies:  [],
+        friends:  [],
+        unoccupied:  []
+    };
+
+    var directions = {
+        North: 'North',
+        East: 'East',
+        South: 'South',
+        West: 'West'
+    };
+    for(var dir in directions) {
+        var tile = whatsAround[dir];
+        if (tile) {
+            if (tile.type === 'Unoccupied') {
+                things.unoccupied.push(directions[dir]);
+            } else if (tile.type === 'HealthWell') {
+                things.healthWells.push(directions[dir]);
+            } else if (tile.type === 'DiamondMine') {
+                things.diamonds.push(directions[dir]);
+            } else if (tile.type === 'Hero' && tile.team === myHero.team) {
+                things.friends.push(directions[dir]);
+            } else if (tile.type === 'Hero' && tile.team !== myHero.team) {
+                if (tile.health <= 30) {
+                    nearDeadEnemyNextToMe = dir;
+                }
+                things.enemies.push(directions[dir]);
+            }
+        }
+    };
+    return things;
+};
+
+var getLowestEnemyHealthDir = function(enemyDirs) {
+    var lowestHealth = 100;
+    var lowestHealthDir;
+    enemyDirs.forEach(function(dir) {
+        if (whatsAroundMe[dir].health <= lowestHealth) {
+            lowestHealth = whatsAroundMe[dir].health;
+            lowestHealthDir = dir;
+        }
+    });
+    return lowestHealthDir;
+};
+
+var getBestEnemyMove = function(limitDirections) {
+    limitDirections = limitDirections || ['North', 'South', 'East', 'West'];
+    var weightsDirs = Object.keys(moveDirWeight);
+    var bestDir = false;
+    weightsDirs.forEach(function(dir) {
+        if (limitDirections.indexOf(dir) !== -1) {
+            if (moveDirWeight[dir].enemies > 0 && moveDirWeight[dir].health > 0) {
+                bestDir = dir;
+            }
+        }
+    });
+    return bestDir;
+};
+
+
+
 //  Set our heros strategy
-var  move =  moves.dslaugh2;
+var move = moves.raypoly;
 
 // Export the move function here
 module.exports = move;
