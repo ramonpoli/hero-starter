@@ -443,7 +443,7 @@ var moves = {
         return moveDir;
     },
 
-    raypoly:  function(gameData, helpers) {
+    raypoly: function (gameData, helpers) {
         var myTop = gameData.activeHero.distanceFromTop;
         var myLeft = gameData.activeHero.distanceFromLeft;
         var myHero = gameData.activeHero;
@@ -452,30 +452,54 @@ var moves = {
 
         var thingsAroundMe = processWhatsAroundTile(helpers.getWhatsAroundTile(gameData, myTop, myLeft), myHero);
         console.log(thingsAroundMe)
-        for( var thingKey in thingsAroundMe ) {
+        for (var thingKey in thingsAroundMe) {
             var thing = thingsAroundMe[thingKey];
-            if( thing.length >= 1) {
-                if ( nearDeadEnemyNextToMe )
-                    return directions[nearDeadEnemyNextToMe];
-                else if ( thingKey == 'enemies' ) {
-                    if ( myHero.health >= 40 ) {
-                        return thing[0];
+            if (thing.length >= 1) {
+                if (thingsAroundMe.healthWells[0] && myHero.health >= 70)
+                    return thingsAroundMe.healthWells[0];
+                if (thingsAroundMe.diamonds[0] && thingsAroundMe.enemies.length < 1)
+                    return thingsAroundMe.diamonds[0];
+                if (thingsAroundMe.enemies[0] && thingsAroundMe.enemies.length === 1 && myHero.health >= 20)
+                    return thingsAroundMe.enemies[0];
+                if (thingsAroundMe.friends[0] && thingsAroundMe.enemies.length < 1)
+                    return thingsAroundMe.friends[0];
+                else if (thingsAroundMe.unoccupied[0]) {
+                    var emptyTileData = {};
+                    for (var emptyTileKey in thingsAroundMe.unoccupied) {
+                        var unoccupiedTile = thingsAroundMe.unoccupied[emptyTileKey];
+                        switch (unoccupiedTile) {
+                            case 'North':
+                                emptyTileData = processWhatsAroundTile(helpers.getWhatsAroundTile(gameData, myTop - 1, myLeft), myHero);
+                                break;
+                            case 'East':
+                                emptyTileData = processWhatsAroundTile(helpers.getWhatsAroundTile(gameData, myTop, myLeft + 1), myHero);
+                                break;
+                            case 'South':
+                                emptyTileData = processWhatsAroundTile(helpers.getWhatsAroundTile(gameData, myTop + 1, myLeft), myHero);
+                                break;
+                            case 'West':
+                                emptyTileData = processWhatsAroundTile(helpers.getWhatsAroundTile(gameData, myTop, myLeft - 1), myHero);
+                                break;
+                        }
+                        if (emptyTileData.enemies.length <= 1 && myHero.health >= 20)
+                            return unoccupiedTile;
+                        else if (emptyTileData.friends.length >= 1)
+                            return unoccupiedTile;
+                        else if (emptyTileData.healthWells[0] && myHero.health >= 70)
+                            return emptyTileData.healthWells[0];
+                        else if (emptyTileData.diamonds[0] )
+                            return emptyTileData.diamonds[0];
                     }
-                    else if ( thingsAroundMe.healthWells[0] )
-                        return thingsAroundMe.healthWells[0]
-                    else if ( thingsAroundMe.unoccupied[0] )
-                        return thingsAroundMe.unoccupied[0]
-                    else
-                        return false;
+                    return false;
                 }
-                else if ( thingsAroundMe.unoccupied[0] )
+                else if (thingsAroundMe.unoccupied[0])
                     return thingsAroundMe.unoccupied[0]
             }
         }
         return 'South';
     }
 
- };
+};
 
 
 
