@@ -455,7 +455,7 @@ var moves = {
         for (var thingKey in thingsAroundMe) {
             var thing = thingsAroundMe[thingKey];
             if (thing.length >= 1) {
-                if (thingsAroundMe.healthWells[0] && myHero.health >= 70)
+                if (thingsAroundMe.healthWells[0] && myHero.health <= 70)
                     return thingsAroundMe.healthWells[0];
                 if (thingsAroundMe.diamonds[0] && thingsAroundMe.enemies.length < 1)
                     return thingsAroundMe.diamonds[0];
